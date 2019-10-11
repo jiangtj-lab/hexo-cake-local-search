@@ -10,8 +10,6 @@ script:
   path: js/local-search.js
   #type: cdn
   #path: //cdn.jsdelivr.net/npm/hexo-cake-local-search@3/dist/local-search.min.js
-  # you can also use theme-next cdn, but you have to use config as same as next `_config.yml`
-  #path: //cdn.jsdelivr.net/gh/theme-next/hexo-theme-next@7.4/source/js/local-search.min.js
 # Set theme layout
 layout:
   # If auto, trigger search by changing input.
