@@ -1,0 +1,25 @@
+# Set generator variables
+path: search.json
+field: post
+format: html
+limit: 10000
+content: true
+# Set search script from
+script:
+  type: dist
+  path: js/local-search.js
+  #type: cdn
+  #path: //cdn.jsdelivr.net/npm/hexo-cake-local-search@3/dist/local-search.min.js
+  # you can also use theme-next cdn, but you have to use config as same as next `_config.yml`
+  #path: //cdn.jsdelivr.net/gh/theme-next/hexo-theme-next@7.4/source/js/local-search.min.js
+# Set theme layout
+layout:
+  # If auto, trigger search by changing input.
+  # If manual, trigger search by pressing enter key or search button.
+  trigger: auto
+  # Show top n results per article, show all results by setting to -1
+  top_n_per_article: 1
+  # Unescape html strings to the readable one.
+  unescape: false
+  # Preload the search data when the page loads.
+  preload: false

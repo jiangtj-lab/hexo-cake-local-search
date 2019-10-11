@@ -1,0 +1,29 @@
+{
+  "name": "hexo-cake-local-search",
+  "version": "3.1.0",
+  "description": "Local seach for cake.",
+  "main": "index.js",
+  "keywords": [
+    "hexo",
+    "search",
+    "generator"
+  ],
+  "author": "NexT team (https://github.com/theme-next)",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/jiangtj-lab/hexo-cake-local-search/issues"
+  },
+  "homepage": "https://github.com/jiangtj-lab/hexo-cake-local-search#readme",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jiangtj-lab/hexo-cake-local-search"
+  },
+  "dependencies": {
+    "hexo-cake-utils": "^1.1.0",
+    "hexo-generator-searchdb": "^1.1.0",
+    "js-yaml": "^3.13.1"
+  }
+}
