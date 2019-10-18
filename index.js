@@ -13,7 +13,7 @@ var config = hexo.config.search = Object.assign(defaultConfig, hexo.config.searc
 if (config.script.type === 'dist') {
   let jsPath = config.script.path;
   hexo.extend.generator.register('generatorLSJs', () => {
-    return { 
+    return {
       path: jsPath,
       data: () => fs.createReadStream(path.join(__dirname, 'dist/local-search.js'))
     }
@@ -37,7 +37,7 @@ hexo.extend.filter.register('theme_inject', function(injects) {
 
   injects.head.raw('local-search', `
   <script>
-  CONFIG.localsearch = {{ config.search.layout | json_encode }};
+  CONFIG.localsearch = ${JSON.stringify(config.layout)};
   CONFIG.path='${config.path}';
   </script>
   `);
