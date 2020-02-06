@@ -26,7 +26,7 @@ if (config.script.type === 'dist') {
 }
 
 injector.register('menu', ctx => {
-  return cache.apply('script', () => {
+  return cache.apply('menu', () => {
     let {__, theme} = ctx;
     let button = (theme.menu_settings.icons?'<i class="menu-item-icon fas fa-search fa-fw"></i>':'') + __('menu.search');
     return `<li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger">${button}</a></li>`
@@ -41,11 +41,11 @@ let headVar = [
 ].join('');
 injector.register('head-end', headVar);
 
-let template = fs.readFileSync(path.join(__dirname, 'layout/local-search.swig'));
+let template = fs.readFileSync(path.join(__dirname, 'layout/local-search.ejs')).toString();
 injector.register('body-end', ctx => {
   return cache.apply('script', () => {
     let placeholder = ctx.__('search.placeholder');
-    let jsPath = ctx.config.script.path;
+    let jsPath = config.script.path;
     return ejs.render(template, {placeholder, jsPath});
   })
 })
