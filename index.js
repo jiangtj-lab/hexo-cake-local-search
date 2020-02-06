@@ -1,7 +1,11 @@
 const path = require('path');
 const yaml = require('js-yaml');
 const fs = require('fs');
+const ejs = require('ejs');
+const {Cache} = require('hexo-util');
 const utils = require('hexo-cake-utils')(hexo, __dirname);
+const injector = require('hexo-extend-injector2')(hexo);
+const cache = new Cache();
 
 utils.loadPlugin('hexo-generator-searchdb');
 
@@ -21,27 +25,29 @@ if (config.script.type === 'dist') {
   config.script.path = path.join(hexo.config.root, jsPath);
 }
 
-// Add Layout
-hexo.extend.filter.register('theme_inject', function(injects) {
+injector.register('menu', ctx => {
+  return cache.apply('script', () => {
+    let {__, theme} = ctx;
+    let button = (theme.menu_settings.icons?'<i class="menu-item-icon fas fa-search fa-fw"></i>':'') + __('menu.search');
+    return `<li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger">${button}</a></li>`
+  })
+})
 
-  injects.menu.raw('local-search', `
-  <li class="menu-item menu-item-search">
-    <a href="javascript:;" class="popup-trigger">
-      {%- if theme.menu_settings.icons %}
-        <i class="menu-item-icon fas fa-search fa-fw"></i>
-      {%- endif %}
-      {{- __('menu.search') }}
-    </a>
-  </li>
-  `);
+let headVar = [
+  '<script>',
+  `CONFIG.localsearch = ${JSON.stringify(config.layout)};`,
+  `CONFIG.path='${config.path}';`,
+  '</script>',
+].join('');
+injector.register('head-end', headVar);
 
-  injects.head.raw('local-search', `
-  <script>
-  CONFIG.localsearch = ${JSON.stringify(config.layout)};
-  CONFIG.path='${config.path}';
-  </script>
-  `);
-  injects.bodyEnd.file('local-search', path.join(__dirname, 'layout/local-search.swig'));
-  injects.style.push(path.join(__dirname, 'layout/local-search.styl'));
+let template = fs.readFileSync(path.join(__dirname, 'layout/local-search.swig'));
+injector.register('body-end', ctx => {
+  return cache.apply('script', () => {
+    let placeholder = ctx.__('search.placeholder');
+    let jsPath = ctx.config.script.path;
+    return ejs.render(template, {placeholder, jsPath});
+  })
+})
 
-});
+injector.register('style', path.join(__dirname, 'layout/local-search.styl'));

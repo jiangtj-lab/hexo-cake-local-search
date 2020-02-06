@@ -22,8 +22,11 @@
     "url": "git+https://github.com/jiangtj-lab/hexo-cake-local-search"
   },
   "dependencies": {
+    "ejs": "^3.0.1",
     "hexo-cake-utils": "^1.1.0",
+    "hexo-extend-injector2": "^0.0.4",
     "hexo-generator-searchdb": "^1.1.0",
+    "hexo-util": "^1.8.1",
     "js-yaml": "^3.13.1"
   }
 }
