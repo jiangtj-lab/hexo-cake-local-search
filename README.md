@@ -5,6 +5,11 @@
 
 This is the wapper of the [hexo-generator-searchdb](https://github.com/theme-next/hexo-generator-searchdb) plug-in. Make it available in cake.
 
+## Require
+
+cake theme version < 2.x, install 3.   
+cake theme version >= 2.x or master, install 4.x   
+
 ## Install
 
 ``` bash
