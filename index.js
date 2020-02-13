@@ -41,7 +41,7 @@ if (config.script.type === 'dist') {
 }
 
 injector.register('menu', ctx => {
-  return cache.apply('menu', () => {
+  return cache.apply(`menu-${ctx.page.lang}`, () => {
     let {__, theme} = ctx;
     let button = (theme.menu_settings.icons ? '<i class="menu-item-icon fas fa-search fa-fw"></i>' : '') + __('search.menu');
     return `<li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger">${button}</a></li>`
@@ -58,7 +58,7 @@ injector.register('head-end', headVar);
 
 let template = fs.readFileSync(path.join(__dirname, 'layout/local-search.ejs')).toString();
 injector.register('body-end', ctx => {
-  return cache.apply('script', () => {
+  return cache.apply(`script-${ctx.page.lang}`, () => {
     let placeholder = ctx.__('search.placeholder');
     let jsPath = config.script.path;
     return ejs.render(template, {placeholder, jsPath});
