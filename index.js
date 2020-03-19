@@ -7,6 +7,17 @@ const utils = require('hexo-cake-utils')(hexo, __dirname);
 const injector = require('hexo-extend-injector2')(hexo);
 const cache = new Cache();
 
+hexo.extend.filter.register('after_init', () => {
+
+const faInline = hexo.extend.helper.get('fa_inline');
+const fa = css => {
+  if (!faInline) {
+    return `<i class='${css}'></i>`
+  }
+  let data = css.split(' ');
+  return faInline(data[1].substring(3), {prefix: data[0]});
+}
+
 utils.loadPlugin('hexo-generator-searchdb');
 
 let defaultLang = {
@@ -43,7 +54,7 @@ if (config.script.type === 'dist') {
 injector.register('menu', ctx => {
   return cache.apply(`menu-${ctx.page.lang}`, () => {
     let {__, theme} = ctx;
-    let button = (theme.menu_settings.icons ? '<i class="menu-item-icon fas fa-search fa-fw"></i>' : '') + __('search.menu');
+    let button = (theme.menu_settings.icons ? fa('fas fa-search') : '') + __('search.menu');
     return `<li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger">${button}</a></li>`
   })
 })
@@ -61,8 +72,15 @@ injector.register('body-end', ctx => {
   return cache.apply(`script-${ctx.page.lang}`, () => {
     let placeholder = ctx.__('search.placeholder');
     let jsPath = config.script.path;
-    return ejs.render(template, {placeholder, jsPath});
+    return ejs.render(template, {
+      placeholder,
+      jsPath,
+      searchIcon: fa('fas fa-search'),
+      closeIcon: fa('fas fa-times-circle')
+    });
   })
 })
 
 injector.register('style', path.join(__dirname, 'layout/local-search.styl'));
+
+})
