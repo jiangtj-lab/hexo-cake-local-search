@@ -1,6 +1,6 @@
 {
   "name": "hexo-cake-local-search",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "description": "Local seach for cake.",
   "main": "index.js",
   "keywords": [
