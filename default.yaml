@@ -21,3 +21,6 @@ layout:
   unescape: false
   # Preload the search data when the page loads.
   preload: false
+menu:
+  icon: fas fa-search
+  priority: 20

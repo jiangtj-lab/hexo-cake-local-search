@@ -51,12 +51,21 @@ if (config.script.type === 'dist') {
   config.script.path = path.join(hexo.config.root, jsPath);
 }
 
-injector.register('menu', ctx => {
-  return cache.apply(`menu-${ctx.page.lang}`, () => {
-    let {__, theme} = ctx;
-    let button = (theme.menu_settings.icons ? fa('fas fa-search') : '') + __('search.menu');
-    return `<li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger">${button}</a></li>`
-  })
+injector.register('menu', {
+  value: ctx => {
+    return cache.apply(`menu-${ctx.page.lang}`, () => {
+      let {__, theme} = ctx;
+      let icon;
+      if (theme.menu_settings && theme.menu_settings.icons === false) {
+        icon = '';
+      } else {
+        icon = config.menu.icon ? fa(config.menu.icon) : '';
+      }
+      let button = icon + __('search.menu');
+      return `<li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger">${button}</a></li>`
+    })
+  },
+  priority: config.menu.priority
 })
 
 let headVar = [
