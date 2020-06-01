@@ -4,12 +4,6 @@ field: post
 format: html
 limit: 10000
 content: true
-# Set search script from
-script:
-  type: dist
-  path: js/local-search.js
-  #type: cdn
-  #path: //cdn.jsdelivr.net/npm/hexo-cake-local-search@3/dist/local-search.min.js
 # Set theme layout
 layout:
   # If auto, trigger search by changing input.

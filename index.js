@@ -1,21 +1,19 @@
-const path = require('path');
+const { join } = require('path');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const ejs = require('ejs');
-const {Cache} = require('hexo-util');
+const { Cache } = require('hexo-util');
 const utils = require('hexo-cake-utils')(hexo, __dirname);
 const injector = require('hexo-extend-injector2')(hexo);
 const cache = new Cache();
 
-hexo.extend.filter.register('after_init', () => {
-
-const faInline = hexo.extend.helper.get('fa_inline');
-const fa = css => {
-  if (!faInline) {
+const fa = (ctx, css) => {
+  let { fa_inline } = ctx;
+  if (!fa_inline) {
     return `<i class='${css}'></i>`
   }
   let data = css.split(' ');
-  return faInline(data[1].substring(3), {prefix: data[0]});
+  return fa_inline(data[1].substring(3), {prefix: data[0]});
 }
 
 utils.loadPlugin('hexo-generator-searchdb');
@@ -36,20 +34,8 @@ utils.i18n({
 })
 
 // Get config
-let defaultConfig = yaml.safeLoad(fs.readFileSync(path.join(__dirname, 'default.yaml')));
+let defaultConfig = yaml.safeLoad(fs.readFileSync(join(__dirname, 'default.yaml')));
 var config = hexo.config.search = Object.assign(defaultConfig, hexo.config.search);
-
-// Generator js
-if (config.script.type === 'dist') {
-  let jsPath = config.script.path;
-  hexo.extend.generator.register('generatorLSJs', () => {
-    return {
-      path: jsPath,
-      data: () => fs.createReadStream(path.join(__dirname, 'dist/local-search.js'))
-    }
-  });
-  config.script.path = path.join(hexo.config.root, jsPath);
-}
 
 injector.register('menu', {
   value: ctx => {
@@ -59,7 +45,7 @@ injector.register('menu', {
       if (theme.menu_settings && theme.menu_settings.icons === false) {
         icon = '';
       } else {
-        icon = config.menu.icon ? fa(config.menu.icon) : '';
+        icon = config.menu.icon ? fa(ctx, config.menu.icon) : '';
       }
       let button = icon + __('search.menu');
       return `<li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger">${button}</a></li>`
@@ -68,28 +54,22 @@ injector.register('menu', {
   priority: config.menu.priority
 })
 
-let headVar = [
-  '<script>',
-  `CONFIG.localsearch = ${JSON.stringify(config.layout)};`,
-  `CONFIG.path='${config.path}';`,
-  '</script>',
-].join('');
-injector.register('head-end', headVar);
 
-let template = fs.readFileSync(path.join(__dirname, 'layout/local-search.ejs')).toString();
+let template = fs.readFileSync(join(__dirname, 'layout/local-search.ejs')).toString();
 injector.register('body-end', ctx => {
   return cache.apply(`script-${ctx.page.lang}`, () => {
     let placeholder = ctx.__('search.placeholder');
-    let jsPath = config.script.path;
     return ejs.render(template, {
       placeholder,
-      jsPath,
-      searchIcon: fa('fas fa-search'),
-      closeIcon: fa('fas fa-times-circle')
+      searchIcon: fa(ctx, 'fas fa-search'),
+      closeIcon: fa(ctx, 'fas fa-times-circle')
     });
   })
 })
 
-injector.register('style', path.join(__dirname, 'layout/local-search.styl'));
-
-})
+injector.register('style', join(__dirname, 'layout/local-search.styl'));
+injector.register('js', [
+  `CONFIG.localsearch = ${JSON.stringify(config.layout)};`,
+  `CONFIG.path='${config.path}';`
+].join(''));
+injector.register('js', join(__dirname, 'dist/local-search.js'));
