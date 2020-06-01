@@ -6,15 +6,14 @@ window.addEventListener('DOMContentLoaded', () => {
   let datas;
   let isXml = true;
   // Search DB path
-  let searchPath = CONFIG.path;
-  if (searchPath.length === 0) {
-    searchPath = 'search.xml';
-  } else if (/json$/i.test(searchPath)) {
+  const path = localsearch.path;
+  if (/json$/i.test(path)) {
     isXml = false;
   }
-  const path = CONFIG.root + searchPath;
   const input = document.getElementById('search-input');
   const resultContent = document.getElementById('search-result');
+  const overlay = document.querySelector('.search-pop-overlay');
+  const popup = document.querySelector('.search-popup');
 
   // Ref: https://github.com/ForbesLindesay/unescape-html
   const unescapeHtml = html => {
@@ -106,6 +105,9 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   const inputEventFunction = () => {
+    if (!isfetched) {
+      return;
+    }
     let searchText = input.value.trim().toLowerCase();
     let keywords = searchText.split(/[-\s]+/);
     if (keywords.length > 1) {
@@ -123,7 +125,7 @@ window.addEventListener('DOMContentLoaded', () => {
         let title = data.title.trim();
         let titleInLowerCase = title.toLowerCase();
         let content = data.content ? data.content.trim().replace(/<[^>]+>/g, '') : '';
-        if (CONFIG.localsearch.unescape) {
+        if (localsearch.options.unescape) {
           content = unescapeHtml(content);
         }
         let contentInLowerCase = content.toLowerCase();
@@ -188,7 +190,7 @@ window.addEventListener('DOMContentLoaded', () => {
           });
 
           // Select top N slices in content
-          let upperBound = parseInt(CONFIG.localsearch.top_n_per_article, 10);
+          let upperBound = parseInt(localsearch.options.top_n_per_article, 10);
           if (upperBound >= 0) {
             slicesOfContent = slicesOfContent.slice(0, upperBound);
           }
@@ -216,9 +218,9 @@ window.addEventListener('DOMContentLoaded', () => {
       });
     }
     if (keywords.length === 1 && keywords[0] === '') {
-      resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>';
+      resultContent.innerHTML = '<div class="no-keywords">Type a new keyword(s) and press Enter to search!</div>';
     } else if (resultItems.length === 0) {
-      resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>';
+      resultContent.innerHTML = '<div class="no-result">No Result!</div>';
     } else {
       resultItems.sort((resultLeft, resultRight) => {
         if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
@@ -234,11 +236,14 @@ window.addEventListener('DOMContentLoaded', () => {
       });
       searchResultList += '</ul>';
       resultContent.innerHTML = searchResultList;
-      window.pjax && window.pjax.refresh(resultContent);
     }
   };
 
   const fetchData = callback => {
+    if (isfetched) {
+      callback();
+      return;
+    }
     fetch(path)
       .then(response => response.text())
       .then(res => {
@@ -252,35 +257,22 @@ window.addEventListener('DOMContentLoaded', () => {
           };
         }) : JSON.parse(res);
 
-        // Remove loading animation
-        document.querySelector('.search-pop-overlay').innerHTML = '';
-        document.body.style.overflow = '';
-
         if (callback) {
           callback();
         }
       });
   };
 
-  if (CONFIG.localsearch.preload) {
-    fetchData();
-  }
-
-  const proceedSearch = () => {
-    document.body.style.overflow = 'hidden';
-    document.querySelector('.search-pop-overlay').style.display = 'block';
-    document.querySelector('.popup').style.display = 'block';
-    document.getElementById('search-input').focus();
-  };
-
   // Search function
   const searchFunc = () => {
-    document.querySelector('.search-pop-overlay').style.display = '';
-    document.querySelector('.search-pop-overlay').innerHTML = '<div class="search-loading-icon"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div>';
-    fetchData(proceedSearch);
+    overlay.style.display = 'block';
+    popup.style.display = 'block';
+    input.focus();
+    resultContent.innerHTML = '<div class="loading-data">Loading ...</div>';
+    fetchData(inputEventFunction);
   };
 
-  if (CONFIG.localsearch.trigger === 'auto') {
+  if (localsearch.options.trigger === 'auto') {
     input.addEventListener('input', inputEventFunction);
   } else {
     document.querySelector('.search-icon').addEventListener('click', inputEventFunction);
@@ -292,27 +284,14 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // Handle and trigger popup window
-  document.querySelectorAll('.popup-trigger').forEach(item => item.addEventListener('click', () => {
-    if (isfetched === false) {
-      searchFunc();
-    } else {
-      proceedSearch();
-    }
-  }));
+  document.querySelectorAll('.popup-trigger').forEach(item => item.addEventListener('click', searchFunc));
 
   // Monitor main search box
   const onPopupClose = () => {
-    document.body.style.overflow = '';
-    document.querySelector('.search-pop-overlay').style.display = 'none';
-    document.querySelector('.popup').style.display = 'none';
+    overlay.style.display = 'none';
+    popup.style.display = 'none';
   };
 
-  document.querySelector('.search-pop-overlay').addEventListener('click', onPopupClose);
+  overlay.addEventListener('click', onPopupClose);
   document.querySelector('.popup-btn-close').addEventListener('click', onPopupClose);
-  window.addEventListener('pjax:success', onPopupClose);
-  window.addEventListener('keyup', event => {
-    if (event.which === 27) {
-      onPopupClose();
-    }
-  });
 });

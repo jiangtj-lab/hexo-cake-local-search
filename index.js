@@ -7,6 +7,8 @@ const utils = require('hexo-cake-utils')(hexo, __dirname);
 const injector = require('hexo-extend-injector2')(hexo);
 const cache = new Cache();
 
+const fullUrlFor = hexo.extend.helper.get('full_url_for').bind(hexo);
+
 const fa = (ctx, css) => {
   let { fa_inline } = ctx;
   if (!fa_inline) {
@@ -68,8 +70,5 @@ injector.register('body-end', ctx => {
 })
 
 injector.register('style', join(__dirname, 'layout/local-search.styl'));
-injector.register('js', [
-  `CONFIG.localsearch = ${JSON.stringify(config.layout)};`,
-  `CONFIG.path='${config.path}';`
-].join(''));
+injector.register('js', `localsearch = {path: '${fullUrlFor(config.path)}', options: ${JSON.stringify(config.layout)}};`);
 injector.register('js', join(__dirname, 'dist/local-search.js'));

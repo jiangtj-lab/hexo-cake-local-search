@@ -13,8 +13,6 @@ layout:
   top_n_per_article: 1
   # Unescape html strings to the readable one.
   unescape: false
-  # Preload the search data when the page loads.
-  preload: false
 menu:
   icon: fas fa-search
   priority: 20
