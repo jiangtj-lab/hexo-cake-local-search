@@ -28,5 +28,9 @@
     "hexo-generator-searchdb": "^1.2.0",
     "hexo-util": "^2.0.0",
     "js-yaml": "^3.13.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.4.0",
+    "eslint-config-hexo": "^4.1.0"
   }
 }
