@@ -30,7 +30,7 @@
     "js-yaml": "^3.13.1"
   },
   "devDependencies": {
-    "eslint": "^7.4.0",
-    "eslint-config-hexo": "^4.1.0"
+    "eslint": "7.4.0",
+    "eslint-config-hexo": "4.1.0"
   }
 }
