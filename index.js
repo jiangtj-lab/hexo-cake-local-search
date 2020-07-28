@@ -80,7 +80,7 @@ injector.register('body-end', ctx => {
   });
 });
 
-injector.register('style', join(__dirname, 'layout/local-search.styl'));
+injector.register('style', join(__dirname, 'layout/local-search.css'));
 injector.register('js', {
   value: `localsearch = {path: '${urlFor(config.path)}', options: ${JSON.stringify(config.layout)}};`,
   priority: 1
