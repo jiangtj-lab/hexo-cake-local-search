@@ -22,17 +22,17 @@
     "url": "git+https://github.com/jiangtj-lab/hexo-cake-local-search"
   },
   "dependencies": {
-    "ejs": "^3.0.1",
-    "hexo-cake-utils": "^1.2.1",
-    "hexo-extend-injector2": "^0.2.0",
-    "hexo-generator-searchdb": "^1.2.0",
-    "hexo-util": "^2.0.0",
-    "js-yaml": "^3.13.1"
+    "ejs": "^5.0.1",
+    "hexo-cake-utils": "^2.0.0",
+    "hexo-extend-injector2": "^0.3.1",
+    "hexo-generator-searchdb": "^1.5.0",
+    "hexo-util": "^4.0.0",
+    "js-yaml": "^4.1.1"
   },
   "devDependencies": {
-    "eslint": "7.5.0",
-    "eslint-config-hexo": "4.1.0",
-    "stylelint": "13.6.1",
-    "stylelint-config-standard": "20.0.0"
+    "eslint": "^10.0.3",
+    "eslint-config-hexo": "^6.0.0",
+    "stylelint": "^17.4.0",
+    "stylelint-config-standard": "^40.0.0"
   }
 }
